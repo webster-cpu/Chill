@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Will You Go For A Chill With Me?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+:root {
+  --bg-1: #f6d9e6;
+  --bg-2: #e8d5ee;
+  --card: #fffafc;
+  --plum: #7a1f4b;
+  --rose: #e0709f;
+  --hot: #d4189a;
+  --hot-dark: #b3107f;
+  --pink-soft: #efa9c8;
+  --text-soft: #8a6a7b;
+  --purple: #a56bd0;
+  --radius: 22px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: "Lora", Georgia, "Times New Roman", serif;
+  color: var(--plum);
+  background: linear-gradient(135deg, var(--bg-1), var(--bg-2));
+  min-height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+/* ---------- Layout ---------- */
+.stage {
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  z-index: 2;
+}
+
+.card {
+  display: none;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 32px 26px 28px;
+  text-align: center;
+  box-shadow: 0 18px 50px rgba(122, 31, 75, 0.18);
+}
+
+.card.active {
+  display: block;
+  animation: pop 0.45s cubic-bezier(0.2, 1.3, 0.4, 1);
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: translateY(14px) scale(0.96); }
+  to   { opacity: 1; transform: none; }
+}
+
+h1 {
+  font-size: 1.55rem;
+  line-height: 1.25;
+  font-weight: 700;
+  margin: 14px 0 12px;
+}
+
+.sub {
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  margin-bottom: 18px;
+}
+.sub.small { font-size: 0.82rem; line-height: 1.5; }
+.sub.italic { font-style: italic; }
+
+/* ---------- Avatars / icons ---------- */
+.avatar {
+  width: 78px;
+  height: 78px;
+  margin: 0 auto;
+  border-radius: 14px;
+  background: #ddd;
+  display: grid;
+  place-items: center;
+  font-size: 2.6rem;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.app-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto;
+  border-radius: 16px;
+  background: #e5262b;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+.app-icon.small {
+  width: 44px;
+  height: 44px;
+  font-size: 1.4rem;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: #fff;
+  padding: 11px 26px;
+  border-radius: 999px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s;
+}
+.btn:hover:not(:disabled) { transform: translateY(-2px); }
+.btn:active:not(:disabled) { transform: scale(0.97); }
+.btn:focus-visible, .link-btn:focus-visible, .food:focus-visible {
+  outline: 3px solid var(--purple);
+  outline-offset: 3px;
+}
+
+.btn-row {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  min-height: 60px;
+  margin-top: 8px;
+}
+
+.btn-yes {
+  background: var(--rose);
+  box-shadow: 0 6px 16px rgba(224, 112, 159, 0.4);
+  align-self: flex-start;
+  transform-origin: center;
+}
+
+.btn-no {
+  background: var(--purple);
+  box-shadow: 0 6px 16px rgba(165, 107, 208, 0.4);
+  align-self: flex-start;
+}
+/* once it starts running away, JS switches it to fixed positioning */
+.btn-no.runaway {
+  position: fixed;
+  z-index: 50;
+  transition: left 0.25s ease, top 0.25s ease;
+}
+
+.btn-main {
+  width: 100%;
+  background: var(--hot);
+  box-shadow: 0 8px 20px rgba(212, 24, 154, 0.35);
+  margin-top: 6px;
+  padding: 13px 26px;
+}
+.btn-main:hover:not(:disabled) { background: var(--hot-dark); }
+.btn-main:disabled {
+  background: var(--pink-soft);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.btn-pay {
+  width: 100%;
+  background: var(--rose);
+  padding: 13px 26px;
+  margin-top: 4px;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  margin-top: 12px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.link-btn:hover { text-decoration: underline; }
+
+/* ---------- Form fields ---------- */
+.field {
+  display: block;
+  text-align: left;
+  margin-bottom: 14px;
+}
+.field span {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.field input,
+.field select {
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--plum);
+  background: #fff;
+  border: 1.5px solid var(--pink-soft);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--hot);
+  box-shadow: 0 0 0 3px rgba(212, 24, 154, 0.15);
+}
+
+/* ---------- Food grid ---------- */
+.food-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.food {
+  background: #fdeef5;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  padding: 14px 4px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--plum);
+  font-size: 0.78rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.15s, border-color 0.15s, background 0.15s;
+}
+.food .emoji { font-size: 1.7rem; }
+.food:hover { transform: translateY(-3px); background: #fbe0ec; }
+.food.selected { border-color: var(--hot); background: #fbd6e8; }
+
+/* ---------- Confirmation ---------- */
+.hearts {
+  color: var(--pink-soft);
+  letter-spacing: 6px;
+  margin-bottom: 14px;
+  font-size: 0.8rem;
+}
+.summary {
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  margin-bottom: 14px;
+}
+
+/* ---------- Invoice ---------- */
+.invoice {
+  text-align: left;
+  border: 1.5px solid var(--pink-soft);
+  background: #fdeef5;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+.invoice-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.invoice .price { font-size: 1.25rem; font-weight: 700; color: var(--hot); }
+.invoice small { font-size: 0.72rem; color: var(--text-soft); }
+
+/* ---------- Floating petals & hearts ---------- */
+.floaters {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+.floater {
+  position: absolute;
+  top: -30px;
+  animation: fall linear forwards;
+  opacity: 0.8;
+}
+@keyframes fall {
+  to { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
+}
+
+/* ---------- Footer ---------- */
+.credit {
+  margin-top: 22px;
+  font-size: 0.7rem;
+  color: var(--text-soft);
+  opacity: 0.7;
+  z-index: 2;
+}
+
+/* ---------- Shake for "no" attempts ---------- */
+.shake { animation: shake 0.35s; }
+@keyframes shake {
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card.active, .floater, .shake { animation: none; }
+  .btn-no.runaway { transition: none; }
+}
+
+</style>
+</head>
+<body>
+  <!-- floating petals / hearts live here -->
+  <div class="floaters" id="floaters" aria-hidden="true"></div>
+
+  <main class="stage">
+
+    <!-- STEP 1: The question -->
+    <section class="card active" id="step-ask" data-step="ask">
+      <div class="avatar" id="avatar">
+        <!-- Swap the emoji for <img src="your-photo.jpg"> if you like -->
+        <span>🐶</span>
+      </div>
+      <h1>🌸 Will you go for a chill with me? 🌸</h1>
+      <div class="btn-row" id="askRow">
+        <button class="btn btn-yes" id="yesBtn">YES ♥</button>
+        <button class="btn btn-no" id="noBtn">no 🐾</button>
+      </div>
+    </section>
+
+    <!-- STEP 2: Surprise -->
+    <section class="card" id="step-wait" data-step="wait">
+      <div class="app-icon" aria-hidden="true">🧽</div>
+      <h1>WAIT YOU ACTUALLY SAID YES?? 😭</h1>
+      <p class="sub">I was so ready for you to say no 😅</p>
+      <button class="btn btn-main" data-next="when">okay okay! →</button>
+    </section>
+
+    <!-- STEP 3: Date & time -->
+    <section class="card" id="step-when" data-step="when">
+      <div class="app-icon small" aria-hidden="true">📅</div>
+      <h1>So... when are you free?</h1>
+
+      <label class="field">
+        <span>Pick a Day 📆</span>
+        <input type="date" id="dateInput" />
+      </label>
+
+      <label class="field">
+        <span>What Time? ⏰</span>
+        <select id="timeInput">
+          <option value="">Select a time...</option>
+        </select>
+      </label>
+
+      <button class="btn btn-main" id="setDateBtn" disabled>set the date! ♥</button>
+    </section>
+
+    <!-- STEP 4: Food -->
+    <section class="card" id="step-food" data-step="food">
+      <h1>What are we feeling? 🍽️</h1>
+      <p class="sub">pick your vibe</p>
+      <div class="food-grid" id="foodGrid"></div>
+    </section>
+
+    <!-- STEP 5: Confirmation -->
+    <section class="card" id="step-confirm" data-step="confirm">
+      <h1 id="confirmTitle">glad you didn’t say no. be ready by 6, I’m coming to get you 🚗</h1>
+      <p class="sub small italic">P.S. normal people text. I made a website on Replit, during lunch, for you. no big deal.</p>
+      <div class="hearts" aria-hidden="true">♥ ♥ ♥ ♥ ♥</div>
+      <p class="summary" id="summary"></p>
+      <button class="btn btn-main" id="acceptBtn">ok I accept 🥰</button>
+    </section>
+
+    <!-- STEP 6: The "fee" -->
+    <section class="card" id="step-fee" data-step="fee">
+      <div class="app-icon small" aria-hidden="true">💳</div>
+      <h1>one small fee</h1>
+      <p class="sub small">to confirm your acceptance of this date, please complete the following transaction. totally normal. everyone does this.</p>
+
+      <div class="invoice">
+        <div class="invoice-top">
+          <strong>Date Agreement™</strong>
+          <span class="price">K200</span>
+        </div>
+        <small>one-time fee • non-refundable • absolutely worth it</small>
+      </div>
+
+      <button class="btn btn-pay" id="payBtn">pay K200 &amp; confirm 🥰</button>
+      <button class="link-btn" id="backBtn">go back</button>
+    </section>
+
+    <!-- STEP 7: Joke reveal -->
+    <section class="card" id="step-done" data-step="done">
+      <div class="app-icon" aria-hidden="true">🎉</div>
+      <h1>just kidding. it’s free.</h1>
+      <p class="sub">dinner is on me. see you soon ♥</p>
+      <button class="btn btn-main" id="restartBtn">start over</button>
+    </section>
+
+  </main>
+
+  <footer class="credit">built with 🌸 for you</footer>
+
+  <script>
+/* ==========================================================
+   Date Invite – script.js
+   Edit the CONFIG block to personalise everything.
+   ========================================================== */
+
+const CONFIG = {
+  price: "K200",
+  foods: [
+    { emoji: "🌯", label: "Chicken shawarma" },
+    { emoji: "🍟🍗", label: "Chips and chicken" },
+    { emoji: "🍚", label: "Nshima" },
+    { emoji: "🍦", label: "Ice cream" },
+  ],
+  // time slots offered in the dropdown
+  startHour: 12,
+  endHour: 21,
+  stepMinutes: 30,
+};
+
+/* ---------- State ---------- */
+const state = { date: "", time: "", food: "" };
+
+/* ---------- Helpers ---------- */
+const $ = (id) => document.getElementById(id);
+
+function showStep(name) {
+  document.querySelectorAll(".card").forEach((c) => c.classList.remove("active"));
+  $("step-" + name).classList.add("active");
+}
+
+/* ---------- Floating petals / hearts ---------- */
+const floatSymbols = ["🌸", "♥", "🌷", "✿", "♡"];
+
+function spawnFloater() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const el = document.createElement("span");
+  el.className = "floater";
+  el.textContent = floatSymbols[Math.floor(Math.random() * floatSymbols.length)];
+  el.style.left = Math.random() * 100 + "vw";
+  el.style.fontSize = 10 + Math.random() * 16 + "px";
+  el.style.color = Math.random() > 0.5 ? "#e0709f" : "#7a1f4b";
+  el.style.animationDuration = 6 + Math.random() * 7 + "s";
+  $("floaters").appendChild(el);
+  setTimeout(() => el.remove(), 14000);
+}
+setInterval(spawnFloater, 700);
+
+function burst(count = 30) {
+  for (let i = 0; i < count; i++) setTimeout(spawnFloater, i * 40);
+}
+
+/* ---------- STEP 1: the runaway "no" button ---------- */
+const noBtn = $("noBtn");
+const yesBtn = $("yesBtn");
+let noEscapes = 0;
+
+function dodge() {
+  noEscapes++;
+
+  // detach from the layout and let it roam the viewport
+  noBtn.classList.add("runaway");
+  const pad = 12;
+  const maxX = window.innerWidth - noBtn.offsetWidth - pad;
+  const maxY = window.innerHeight - noBtn.offsetHeight - pad;
+  noBtn.style.left = pad + Math.random() * maxX + "px";
+  noBtn.style.top = pad + Math.random() * maxY + "px";
+
+  // the YES button gets a little bigger every time you try to say no
+  const scale = Math.min(1 + noEscapes * 0.12, 2);
+  yesBtn.style.transform = `scale(${scale})`;
+
+  const labels = ["no 🐾", "are you sure?", "think again 🥺", "nope!", "too slow 😏", "please? 🥹"];
+  noBtn.textContent = labels[noEscapes % labels.length];
+}
+
+// works for mouse, touch, and keyboard focus
+["mouseenter", "touchstart", "focus"].forEach((evt) =>
+  noBtn.addEventListener(evt, (e) => {
+    e.preventDefault();
+    dodge();
+  }, { passive: false })
+);
+noBtn.addEventListener("click", (e) => { e.preventDefault(); dodge(); });
+
+yesBtn.addEventListener("click", () => {
+  noBtn.classList.remove("runaway");
+  noBtn.style.display = "none";
+  burst(40);
+  showStep("wait");
+});
+
+/* ---------- STEP 2 → next ---------- */
+document.querySelectorAll("[data-next]").forEach((btn) =>
+  btn.addEventListener("click", () => showStep(btn.dataset.next))
+);
+
+/* ---------- STEP 3: date & time ---------- */
+const dateInput = $("dateInput");
+const timeInput = $("timeInput");
+const setDateBtn = $("setDateBtn");
+
+// don't allow past dates
+dateInput.min = new Date().toISOString().split("T")[0];
+
+// build time options
+(function buildTimes() {
+  for (let h = CONFIG.startHour; h <= CONFIG.endHour; h++) {
+    for (let m = 0; m < 60; m += CONFIG.stepMinutes) {
+      if (h === CONFIG.endHour && m > 0) continue;
+      const hour12 = ((h + 11) % 12) + 1;
+      const label = `${hour12}:${String(m).padStart(2, "0")} ${h >= 12 ? "PM" : "AM"}`;
+      const opt = document.createElement("option");
+      opt.value = label;
+      opt.textContent = label;
+      timeInput.appendChild(opt);
+    }
+  }
+})();
+
+function validateWhen() {
+  state.date = dateInput.value;
+  state.time = timeInput.value;
+  setDateBtn.disabled = !(state.date && state.time);
+}
+dateInput.addEventListener("input", validateWhen);
+timeInput.addEventListener("change", validateWhen);
+
+setDateBtn.addEventListener("click", () => {
+  burst(20);
+  showStep("food");
+});
+
+/* ---------- STEP 4: food picker ---------- */
+const foodGrid = $("foodGrid");
+
+CONFIG.foods.forEach((f) => {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "food";
+  b.innerHTML = `<span class="emoji">${f.emoji}</span><span>${f.label}</span>`;
+  b.addEventListener("click", () => {
+    foodGrid.querySelectorAll(".food").forEach((x) => x.classList.remove("selected"));
+    b.classList.add("selected");
+    state.food = f.label;
+    // brief pause so the selection is visible, then move on
+    setTimeout(() => {
+      renderSummary();
+      showStep("confirm");
+    }, 450);
+  });
+  foodGrid.appendChild(b);
+});
+
+/* ---------- STEP 5: confirmation ---------- */
+function prettyDate(iso) {
+  if (!iso) return "";
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString(undefined, {
+    weekday: "long", month: "long", day: "numeric",
+  });
+}
+
+function renderSummary() {
+  $("summary").textContent =
+    `${prettyDate(state.date)} at ${state.time} • ${state.food}`;
+}
+
+$("acceptBtn").addEventListener("click", () => {
+  burst(25);
+  showStep("fee");
+});
+
+/* ---------- STEP 6: the "fee" ---------- */
+$("backBtn").addEventListener("click", () => showStep("confirm"));
+
+$("payBtn").addEventListener("click", () => {
+  burst(60);
+  showStep("done");
+});
+
+/* ---------- STEP 7: restart ---------- */
+$("restartBtn").addEventListener("click", () => {
+  state.date = state.time = state.food = "";
+  dateInput.value = "";
+  timeInput.value = "";
+  setDateBtn.disabled = true;
+  foodGrid.querySelectorAll(".food").forEach((x) => x.classList.remove("selected"));
+  yesBtn.style.transform = "";
+  noEscapes = 0;
+  noBtn.style.display = "";
+  noBtn.classList.remove("runaway");
+  noBtn.style.left = noBtn.style.top = "";
+  noBtn.textContent = "no 🐾";
+  showStep("ask");
+});
+
+</script>
+</body>
+</html>
